@@ -1,0 +1,8 @@
+#!/bin/bash
+
+A="$(arp -n | grep virbr | cut -f1 -d\ )"
+if [ -n "$A" ]; then
+ssh "$A"
+else
+echo Cannot find vm
+fi

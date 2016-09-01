@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# multi do
+# read args until --
+# if no --, assume -- after first parameter
+declare -a A=("$@")
+declare -a B C
+Z=0
+for s in "${A[@]}"; do
+    if [ "$Z" = 0 ]; then
+        if [ "$s" = "--" ]; then
+            Z=1
+        else
+            B=("${B[@]}" "$s")
+        fi
+    else
+        C=("${C[@]}" "$s")
+    fi
+done
+if [ "$Z" = 0 ]; then
+    T="${B[0]}"
+    U=("${B[@]:1}")
+else
+    T=("${B[@]}")
+    U=("${C[@]}")
+fi
+px() {
+    A="$1"
+    shift
+    for s; do
+        echo "$A $s"
+    done
+}
+# For each pattern, we substitute into the pattern, python style
+# and then 
+for s in "${T[@]}"; do
+    echo do "$s"
+    echo with "${U[@]}"
+    eval $(python3 -c $'import sys\nprint(sys.argv[1].format(*sys.argv[2:]))' "$s" "${U[@]}")
+done

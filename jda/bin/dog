@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# Writes from stdin into each named file
+tee "$@" >& /dev/null

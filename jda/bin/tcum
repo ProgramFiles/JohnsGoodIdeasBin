@@ -1,0 +1,45 @@
+#!/bin/bash
+
+# must be run as root
+if (( $EUID != 0 )); then
+  echo -e "\e[31mYou must be root to run this -- trying sudo.\e[0m"
+  	export user=$USER
+  	export home=$HOME
+    exec sudo -E "$0" "$@"
+  exit 1
+else
+	if [ -z "$home" -o -z "$user" ]; then
+		echo "Improperly run"
+		exit 42
+	fi
+fi
+first() { # return first arg only (useful with *-style glob matches)
+    echo -n "$1"
+}
+firstentropy() {
+    mount | grep entropy | lines 0 | sed -e 's/.* on //g' -e 's/ type .*$//'
+}
+
+A="$1"
+if [ -d "$A" ]; then
+	# assume this is mountpoint
+    /bin/true
+else
+	# grab first
+    A="$(firstentropy)"
+fi
+
+# find mapper device
+B="$(mount | grep "$A")"
+if [ $? != 0 ]; then echo ouch1; exit 1; fi
+C="${B%% *}"
+D="${C##*/}"
+E="$(tcplay -j "$D" | grep Device: | sed -e "s/^.*\t\t*//")"
+if [ -e "$E" ]; then
+    umount "$A"
+    rmdir "$A"
+    losetup -d "$E"
+else
+    echo ouch2
+    exit 2
+fi

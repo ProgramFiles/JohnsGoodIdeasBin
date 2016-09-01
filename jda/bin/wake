@@ -1,0 +1,15 @@
+#!/bin/bash
+
+A="$1"
+if [ -z "$A" ]; then
+    echo "Which host?"
+    exit 1;
+fi
+B="$(grep "$A" /etc/ethers | head -n1)"
+if [ -n "$B" ]; then
+    C="$(echo "$B" | cut -f1 -d\ )"
+    echo "Waking $A via $C"
+    wakeonlan "$C"
+else
+    echo "Couldnt look up $A"
+fi

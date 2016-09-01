@@ -1,0 +1,26 @@
+#!/usr/bin/env python3
+
+# Broadcast version
+
+import socket
+import sys
+args = sys.argv[1:]
+msg = " ".join(args)
+if len(msg) == 0:
+    msg = "Generic ping"
+
+s = socket.socket(socket.AF_INET,socket.SOCK_DGRAM)
+s.bind(('',0))
+s.setsockopt(socket.SOL_SOCKET,socket.SO_BROADCAST,1)
+whereto = ('<broadcast>',27877)
+
+message = msg.encode('utf-8')
+
+try:
+
+    # Send data
+    print("Sending")
+    sent = s.sendto(message, whereto)
+    print("Sent")
+finally:
+    s.close()

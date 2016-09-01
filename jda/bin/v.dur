@@ -1,0 +1,23 @@
+#!/bin/bash
+
+pdur() {
+    local A="$1" 
+    local B=${#A}
+    if ((B > 50)); then
+        echo -ne "$A:\n    "
+    else
+        echo -n "$A: "
+    fi
+    avprobe "$A" 2>&1 | grep Duration | cut -f1 -d,
+}
+pfs() {
+    for s; do
+        pdur "$s"
+    done
+}
+
+if [ -z "$*" ]; then
+    pfs *.mp4
+else
+    pfs "$@"
+fi

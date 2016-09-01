@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# xtx host pass command
+H="$1"
+P="$2"
+shift
+shift
+
+xfce4-terminal -x sshpass -p "$P" ssh "$H" "$@"

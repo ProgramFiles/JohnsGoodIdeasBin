@@ -1,0 +1,24 @@
+#!/bin/bash
+
+A=$((${1}))
+echo "Sel $A"
+
+#Wacom Intuos Pro M Pen stylus   	id: 13	type: STYLUS    
+#Wacom Intuos Pro M Pen eraser   	id: 14	type: ERASER    
+#Wacom Intuos Pro M Pen cursor   	id: 15	type: CURSOR    
+#Wacom Intuos Pro M Pen pad      	id: 16	type: PAD       
+#Wacom Intuos Pro M Finger touch 	id: 17	type: TOUCH     
+dv='Wacom Intuos Pro M Pen pad'
+declare -a sc
+sc=($(xrandr | grep connected | cut -f1 -d\ ))
+scl="${#sc[@]}"
+sci=$((A % scl))
+scr="${sc[$sci]}"
+
+echo "Moving Wacom to $scr"
+W="Wacom Intuos Pro M Pen"
+for s in stylus eraser cursor pad; do
+xsetwacom --set "$W $s" MapToOutput "$scr"
+done
+
+exit 0

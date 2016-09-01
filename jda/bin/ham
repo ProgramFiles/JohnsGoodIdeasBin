@@ -1,0 +1,6 @@
+#!/bin/bash
+
+[ -z "$CMD" ] && CMD=cat
+while read s; do
+    "$CMD" $s
+done

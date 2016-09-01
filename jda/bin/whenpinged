@@ -1,0 +1,44 @@
+#!/usr/bin/env python3
+
+# Broadcast listening version
+
+import socket
+import sys
+args = sys.argv[1:]
+import subprocess
+if len(args) > 0:
+    cmd = args
+else:
+    cmd = ["play","/usr/jda/share/kick1.flac"]
+
+# Create a TCP/IP socket
+sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+
+# Bind the socket to the port
+server_address = ('<broadcast>', 27877)
+print('starting up on %s port %s' % server_address,file=sys.stderr)
+sock.bind(server_address)
+
+def xxy(cmd,srv,msg):
+    for x in range(8):
+        subprocess.call(cmd)
+        time.sleep(1)
+    print("Received from {}".format(srv))
+    dcmd = list("dig +noall +answer -x".split(" "))+["{}".format(srv[0])]
+    subprocess.call(dcmd)
+    print("Received {}".format(msg))
+
+i=0
+while True:
+    print('.',file=sys.stderr,end="")
+    i += 1
+    if i >= 60:
+        print('-',file=sys.stderr)
+    
+    data, address = sock.recvfrom(4096)
+
+    print("Received")
+    msg = data.decode('utf-8')
+    xxy(cmd,address,msg)
+
+

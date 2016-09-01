@@ -1,0 +1,113 @@
+#!/usr/bin/env python3
+import sys,os.path
+class Session:
+    def __init__(self,user,host,password,desc):
+        self.user = user
+        self.host = host
+        self.password = password
+        self.desc = desc
+class SessionList:
+    def __init__(self):
+        self.clear()
+    def add(self,name,sesh):
+        if name in self.l:
+            del(self.d[name])
+            i = self.l.index(name)
+            del(self.l[i])
+        self.d[name] = sesh
+        self.l.append(name)
+        return self
+    def matches(self,xs):
+        a = []
+        b = filter(lambda t: t[:len(xs)] == xs,self.l)
+        for x in b:
+            c = self.d[x]
+            a.append("{}: {}@{} {}".format(x,c.user,c.host,c.desc))
+        return a
+    def fromfile(self,filename):
+        if not os.path.isfile(filename):
+            return self
+        with open(filename) as f:
+            a = f.readlines()
+        for x in a:
+            x = x.rstrip()
+            b = x.split(":")
+            if(len(b) == 5):
+                y = b[0]
+                if y in self.d:
+                    print("Already have {}".format(y))
+                else:
+                    print("Adding {}".format(y))
+                    self.add(y,Session(*b[1:]))
+            else:
+                print("Skipping [{}]".format(x))
+        return self
+    def clear(self):
+        self.d = {}
+        self.l = []
+        return self
+import os,os.path
+def tild(x):
+    return os.path.expanduser(x)
+sl = SessionList().fromfile(tild("~/.xsesh")).fromfile("/etc/xsesh")
+def go(e):
+    global sl,t
+    w = e.widget
+    x = w.get().rstrip()
+    try:
+        sesh = sl.d[x]
+        if sesh.password != "":
+            os.execl("/usr/bin/xfce4-terminal","xfce4-terminal","-x","sshpass",
+                "-p",sesh.password,"ssh","{}@{}".format(sesh.user,sesh.host))
+        else:
+            os.execl("/usr/bin/xfce4-terminal","xfce4-terminal","-x",
+                "ssh","{}@{}".format(sesh.user,sesh.host))
+    except KeyError:
+        w.delete(0,Tk.END)
+        tx = "Session '{}' not defined\n".format(x)
+        tx += "\n".join(sl.matches(""))
+        t.delete("0.0",Tk.END)
+        t.insert(Tk.INSERT,tx)
+        
+import tkinter as Tk
+
+idx=-1
+def down(e):
+    global idx,sl
+    w = e.widget
+    idx += 1
+    if idx >= len(sl.l):
+        idx = len(sl.l)-1
+    n = sl.l[idx]
+    w.delete(0,Tk.END)
+    w.insert(0,n)
+def up(e):
+    global idx,sl
+    w = e.widget
+    idx -= 1
+    if idx < 0:
+        idx = 0
+    n = sl.l[idx]
+    w.delete(0,Tk.END)
+    w.insert(0,n)
+
+top = Tk.Tk()
+# Set title to Select Xterm Session
+# Add list of sessions
+t = Tk.Text(top)
+t.insert(Tk.INSERT,"\n".join(sl.matches("")))
+t.pack(side=Tk.TOP)
+# Simple text box to type in
+e = Tk.Entry(top)
+e.bind("<Return>",go)
+e.bind("<Down>",down)
+e.bind("<Up>",up)
+e.pack(side=Tk.BOTTOM)
+e.focus_set()
+# Autocomplete
+
+
+# Go
+top.mainloop()
+
+

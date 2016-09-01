@@ -1,0 +1,20 @@
+#!/bin/bash
+
+usage() {
+    echo "nxt time message"
+    echo "  time is number of seconds, or takes the form"
+    echo "  4m23s   or 1h23m45s   or 1h34s"
+}
+
+A="$1"
+if [ -z "$1" ]; then
+    usage
+    exit 1
+else
+    T="$(hms "$A")"
+    shift
+    echo "Notify after $T seconds ($A)"
+    echo "  $*"
+    sleep "$T"
+    notify-send "$@"
+fi

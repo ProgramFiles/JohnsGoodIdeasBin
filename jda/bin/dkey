@@ -1,0 +1,13 @@
+#!/bin/bash
+
+A="$1"
+B="/usr/jda/share/keys/${A}keys.png" 
+if [ -f "$B" ]; then
+    echo $B found
+    for I in 0 1 2 3; do
+        C="/backdrop/screen0/monitorDVI-I-1/workspace${I}/last-image" 
+        xfconf-query --channel xfce4-desktop --property "$C" --set "$B"
+    done
+else
+    echo $B not found
+fi

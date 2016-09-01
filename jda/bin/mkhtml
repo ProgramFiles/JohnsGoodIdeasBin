@@ -1,0 +1,38 @@
+#!/usr/bin/env python3
+
+import sys
+args = sys.argv[1:]
+try:
+    pts = int(args[0])
+except:
+    pts = 12
+
+a = '''<!DOCTYPE html>
+<html>
+<head>
+<style>
+body {
+	width: 50em;
+	padding: 2em;
+	margin-left: auto;
+	margin-right: auto;
+	font-family: 'Palatino Linotype','Palatino','TexGyrePagella',serif;
+	font-size: XXYZpt;
+}
+</style>
+</head>
+<body>
+XBOD
+</body>
+</html>'''
+
+b = sys.stdin.read()
+c = b.split("\n\n")
+d = map(lambda t: t.replace("\n","<br />\n"),c)
+def mkpar(x):
+    return "<p>"+x+"</p>"
+e = list(map(mkpar,d))
+f = "\n".join(e)
+
+z = a.replace("XXYZ",str(pts)).replace("XBOD",f)
+print(z)

@@ -1,0 +1,3 @@
+#!/bin/bash
+
+xsetwacom --set 'Wacom Intuos Pro M Finger touch' Touch on

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+for s; do
+        echo curl "$s"
+        curl "$(echo "$s")" | rx img 'm:src="([^"]*)"' a:0 z:"{0}" 'm:jpg|png|gif' p | xargs -n 1 curl -O
+done

@@ -1,0 +1,18 @@
+#!/bin/bash
+# Each parameter is the name of a list file
+# Each line in a list file is a Youtube URL
+# the script downloads each, one after another
+
+ydlf1() {
+	local A
+    declare -a A
+	while read s; do
+		A=("${A[@]}" "$s")
+	done < "$1"
+	for s in "${A[@]}"; do
+        youtube-dl "$s"
+	done
+}
+for s; do
+	ydlf1 "$s"
+done

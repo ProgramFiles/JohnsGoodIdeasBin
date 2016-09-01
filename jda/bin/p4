@@ -1,0 +1,4 @@
+#!/bin/bash
+
+A="$(echo "$*$SUGAR" | md5sum)" 
+echo "${A:0:4}"

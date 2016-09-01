@@ -1,0 +1,4 @@
+#!/bin/bash
+
+A="$(echo "$*$SUGAR" | md5sum | uuencode -m - | head -n2 | tail -n1)" 
+echo "${A:0:16}"

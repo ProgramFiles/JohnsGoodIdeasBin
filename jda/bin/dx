@@ -1,0 +1,11 @@
+#!/bin/bash
+
+A=()
+if [ -f "$1" ]; then
+	while read s; do
+        A=("${A[@]}" "$s")
+    done
+fi < "$1"
+for s in "${A[@]}"; do
+    eval $s || break
+done
